@@ -68,24 +68,6 @@ export function AuthProvider({ children }) {
     setUserData(null);
   };
 
-  const loginWithMock = async () => {
-    const mockUid = 'mock-user-123'; // Stable ID for consistent testing
-    const mockUser = { uid: mockUid, email: 'mock@example.com', displayName: 'Mock User' };
-    
-    setUser(mockUser);
-    
-    // Check for existing profile in Firestore to maintain persistence
-    const userRef = doc(db, 'users', mockUid);
-    const userDoc = await getDoc(userRef);
-    
-    if (userDoc.exists()) {
-      setUserData(userDoc.data());
-    } else {
-      setUserData(null);
-    }
-    
-    return mockUser;
-  };
 
   const updateUserData = async (data) => {
     if (!user) return;
@@ -99,7 +81,6 @@ export function AuthProvider({ children }) {
     userData,
     loading,
     loginWithGoogle,
-    loginWithMock,
     logout,
     updateUserData,
     isAuthenticated: !!user,
