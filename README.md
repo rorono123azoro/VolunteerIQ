@@ -1,5 +1,7 @@
 # VolunteerIQ
 
+**Live Application:** [https://volunteeriq-app-2026.web.app](https://volunteeriq-app-2026.web.app)
+
 VolunteerIQ is an AI-powered volunteer coordination platform designed for NGOs and nonprofits. It streamlines the volunteer lifecycle by offering intelligent matching, real-time tracking, and automated impact reporting, all built on a robust Google technology stack.
 
 ## Features & Functions
@@ -78,5 +80,10 @@ The platform is a modern, full-stack application leveraging the following techno
    firebase emulators:start
    ```
 
+## Team Members
+- **Tejendra Singh** (Team Lead)
+- **Kunal Singh**
+- **Karishma Singh**
+
 ## Contributing
-Contributions, issues, and feature requests are welcome! 
+Contributions, issues, and feature requests are welcome!
