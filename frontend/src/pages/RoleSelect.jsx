@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -6,35 +6,33 @@ import { db } from '../services/firebase';
 import { ROLES } from '../constants';
 
 export default function RoleSelect() {
-  const { user, updateUserData } = useAuth();
+  const { user, userData, hasProfile, updateUserData } = useAuth();
   const [selected, setSelected] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // If user already has a profile, redirect them immediately
+  useEffect(() => {
+    if (hasProfile) {
+      if (userData.role === 'coordinator') navigate('/coordinator');
+      else navigate('/volunteer');
+    }
+  }, [hasProfile, userData, navigate]);
 
   const handleContinue = async () => {
     if (!selected || !user) return;
     setLoading(true);
     try {
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
+      const basicData = {
         role: selected,
-        organizationId: null,
-        city: '',
-        skills: [],
-        skillEmbedding: [],
-        availability: {},
-        bio: '',
-        totalHours: 0,
-        eventsAttended: 0,
-        isActive: true,
-        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
-      await setDoc(doc(db, 'users', user.uid), userData);
-      await updateUserData(userData);
+      
+      // If the user document doesn't exist at all yet, we can set defaults.
+      // But AuthContext now creates a shell doc on login.
+      // So we just merge the role selection.
+      await setDoc(doc(db, 'users', user.uid), basicData, { merge: true });
+      await updateUserData(basicData);
 
       if (selected === ROLES.VOLUNTEER) {
         navigate('/onboarding');

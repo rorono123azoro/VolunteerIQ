@@ -1,112 +1,18 @@
-rules_version = '2';
+rules_version='2'
+
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper: check if user is authenticated
-    function isAuth() {
-      return request.auth != null;
-    }
-
-    // Helper: check if user is the document owner
-    function isOwner(uid) {
-      return isAuth() && request.auth.uid == uid;
-    }
-
-    // Helper: get user role from Firestore
-    function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-
-    function isCoordinator() {
-      return isAuth() && getUserRole() == 'coordinator';
-    }
-
-    function isAdmin() {
-      return isAuth() && getUserRole() == 'admin';
-    }
-
-    // Users collection
-    match /users/{userId} {
-      allow read: if isAuth();
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Organizations collection
-    match /organizations/{orgId} {
-      allow read: if isAuth();
-      allow create: if isCoordinator() || isAdmin();
-      allow update: if isCoordinator() || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Opportunities collection
-    match /opportunities/{opportunityId} {
-      allow read: if isAuth();
-      allow create: if isCoordinator() || isAdmin();
-      allow update: if isCoordinator() || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Applications collection
-    match /applications/{applicationId} {
-      allow read: if isAuth() && (
-        resource.data.volunteerId == request.auth.uid ||
-        isCoordinator() ||
-        isAdmin()
-      );
-      allow create: if isAuth() && request.resource.data.volunteerId == request.auth.uid;
-      allow update: if isCoordinator() || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Events collection
-    match /events/{eventId} {
-      allow read: if isAuth();
-      allow create: if isCoordinator() || isAdmin();
-      allow update: if isCoordinator() || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Attendance collection
-    match /attendance/{attendanceId} {
-      allow read: if isAuth();
-      allow create: if isAuth();
-      allow update: if isAuth() && (
-        resource.data.volunteerId == request.auth.uid ||
-        isCoordinator() ||
-        isAdmin()
-      );
-      allow delete: if isAdmin();
-    }
-
-    // Impact reports collection
-    match /impact_reports/{reportId} {
-      allow read: if isCoordinator() || isAdmin();
-      allow create: if isCoordinator() || isAdmin();
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // Badges (static)
-    match /badges/{badgeId} {
-      allow read: if isAuth();
-      allow write: if isAdmin();
-    }
-
-    // User badges
-    match /user_badges/{badgeId} {
-      allow read: if isAuth();
-      allow write: if isAdmin();
-    }
-
-    // Notifications
-    match /notifications/{notifId} {
-      allow read: if isAuth() && resource.data.userId == request.auth.uid;
-      allow create: if isCoordinator() || isAdmin();
-      allow update: if isAuth();
-      allow delete: if isAdmin();
+    match /{document=**} {
+      // This rule allows anyone with your database reference to view, edit,
+      // and delete all data in your database. It is useful for getting
+      // started, but it is configured to expire after 30 days because it
+      // leaves your app open to attackers. At that time, all client
+      // requests to your database will be denied.
+      //
+      // Make sure to write security rules for your app before that time, or
+      // else all client requests to your database will be denied until you
+      // update your rules.
+      allow read, write: if request.time < timestamp.date(2026, 5, 28);
     }
   }
 }

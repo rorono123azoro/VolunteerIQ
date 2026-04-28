@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Landing() {
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, loginWithMock } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -13,9 +13,22 @@ export default function Landing() {
       setLoading(true);
       setError('');
       await loginWithGoogle();
-      navigate('/role-select');
+      // App.jsx will handle redirection automatically
     } catch (err) {
       setError('Sign-in failed. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMockLogin = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      await loginWithMock();
+      // App.jsx will handle redirection automatically
+    } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
@@ -53,6 +66,14 @@ export default function Landing() {
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
             {loading ? 'Signing in...' : 'Continue with Google'}
+          </button>
+          
+          <button
+            onClick={handleMockLogin}
+            disabled={loading}
+            style={{ marginTop: '10px', padding: '12px', background: '#e2e8f0', color: '#0f172a', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}
+          >
+            Dev Bypass (Test Mode)
           </button>
 
           {error && <p className="form-error" style={{ marginTop: '12px' }}>{error}</p>}

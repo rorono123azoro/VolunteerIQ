@@ -5,12 +5,12 @@ import { getDatabase } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCL1Fc4KulJBiiXRnFOzjPG3yHxUifYxLs",
-  authDomain: "volunteeriq-2026-demo.firebaseapp.com",
-  projectId: "volunteeriq-2026-demo",
-  storageBucket: "volunteeriq-2026-demo.firebasestorage.app",
-  messagingSenderId: "491392878690",
-  appId: "1:491392878690:web:845bac86e539a5441ee93b"
+  apiKey: "AIzaSyByE5jhuKakZQbhFd2Us99lnz_zZ16_czw",
+  authDomain: "volunteeriq-app-2026.firebaseapp.com",
+  projectId: "volunteeriq-app-2026",
+  storageBucket: "volunteeriq-app-2026.firebasestorage.app",
+  messagingSenderId: "460960561993",
+  appId: "1:460960561993:web:06cf670ad3b68b8b577898"
 };
 
 const app = initializeApp(firebaseConfig);

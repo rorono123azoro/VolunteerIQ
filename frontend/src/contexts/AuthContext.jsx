@@ -18,14 +18,24 @@ export function AuthProvider({ children }) {
       if (firebaseUser) {
         setUser(firebaseUser);
         try {
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          // Save basic profile info automatically
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          await setDoc(userRef, {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || '',
+            photoURL: firebaseUser.photoURL || '',
+            lastLogin: new Date().toISOString()
+          }, { merge: true });
+
+          const userDoc = await getDoc(userRef);
           if (userDoc.exists()) {
             setUserData(userDoc.data());
           } else {
             setUserData(null);
           }
         } catch (err) {
-          console.error('Error fetching user data:', err);
+          console.error('Error handling user profile:', err);
           setUserData(null);
         }
       } else {
@@ -54,6 +64,27 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     await signOut(auth);
+    setUser(null);
+    setUserData(null);
+  };
+
+  const loginWithMock = async () => {
+    const mockUid = 'mock-user-123'; // Stable ID for consistent testing
+    const mockUser = { uid: mockUid, email: 'mock@example.com', displayName: 'Mock User' };
+    
+    setUser(mockUser);
+    
+    // Check for existing profile in Firestore to maintain persistence
+    const userRef = doc(db, 'users', mockUid);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      setUserData(userDoc.data());
+    } else {
+      setUserData(null);
+    }
+    
+    return mockUser;
   };
 
   const updateUserData = async (data) => {
@@ -68,6 +99,7 @@ export function AuthProvider({ children }) {
     userData,
     loading,
     loginWithGoogle,
+    loginWithMock,
     logout,
     updateUserData,
     isAuthenticated: !!user,

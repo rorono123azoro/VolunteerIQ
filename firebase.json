@@ -17,17 +17,6 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ],
-    "headers": [
-      {
-        "source": "**/*.@(js|css)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=31536000"
-          }
-        ]
-      }
     ]
   },
   "storage": {
@@ -37,8 +26,11 @@
     "providers": {
       "googleSignIn": {
         "oAuthBrandDisplayName": "VolunteerIQ",
-        "supportEmail": "tejendrasingh9068@gmail.com"
+        "supportEmail": "kunalsingh9759671145@gmail.com"
       }
     }
+  },
+  "functions": {
+    "source": "functions"
   }
 }
